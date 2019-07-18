@@ -31,7 +31,8 @@ class Vacancy extends Model
         'experience',
         'email',
         'phone',
-        'user_id'
+        'user_id',
+        'status'
     ];
 
     /**
@@ -47,6 +48,7 @@ class Vacancy extends Model
         'experience' => 'integer',
         'email' => 'string',
         'phone' => 'string',
+        'status' => 'integer',
         'user_id' => 'integer'
     ];
 

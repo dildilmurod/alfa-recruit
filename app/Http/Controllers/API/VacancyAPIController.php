@@ -23,6 +23,7 @@ class VacancyAPIController extends AppBaseController
     public function __construct(VacancyRepository $vacancyRepo)
     {
         $this->vacancyRepository = $vacancyRepo;
+        $this->middleware('auth:api', ['except' => ['']]);
     }
 
     /**

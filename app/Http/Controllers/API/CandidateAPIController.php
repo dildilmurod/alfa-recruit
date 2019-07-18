@@ -23,6 +23,7 @@ class CandidateAPIController extends AppBaseController
     public function __construct(CandidateRepository $candidateRepo)
     {
         $this->candidateRepository = $candidateRepo;
+        $this->middleware('auth:api', ['except' => ['']]);
     }
 
     /**

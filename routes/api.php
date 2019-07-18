@@ -23,5 +23,26 @@ Route::post('/login', 'AuthController@login');
 
 
 Route::resource('vacancies', 'VacancyAPIController');
+Route::post('vacancies/{vacancies}', 'VacancyAPIController@update');
 
 Route::resource('candidates', 'CandidateAPIController');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

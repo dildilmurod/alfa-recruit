@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model as Model;
  * @package App\Models
  * @version July 18, 2019, 3:26 pm UTC
  *
- * @property sting name
+ * @property string name
  * @property string location
  * @property string dob
  * @property string sex
@@ -46,6 +46,7 @@ class Candidate extends Model
     protected $casts = [
         'id' => 'integer',
         'location' => 'string',
+        'name' => 'string',
         'dob' => 'string',
         'sex' => 'string',
         'citizenship' => 'string',
