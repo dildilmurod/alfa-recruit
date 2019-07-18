@@ -163,6 +163,13 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         /*
+         * Infyom laravel generator providers
+         */
+        Prettus\Repository\Providers\RepositoryServiceProvider::class,
+        \InfyOm\Generator\InfyOmGeneratorServiceProvider::class,
+
+
+        /*
          * Package Service Providers...
          */
 
