@@ -49,3 +49,6 @@ Route::get('candidates/deactivate/{candidates}', 'CandidateAPIController@deactiv
 
 
 
+
+
+Route::resource('comments', 'CommentAPIController');

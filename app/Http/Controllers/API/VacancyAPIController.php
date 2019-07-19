@@ -57,7 +57,10 @@ class VacancyAPIController extends AppBaseController
      */
     public function store(CreateVacancyAPIRequest $request)
     {
-        $input = $request->all();
+        $input = $request->except(['user_id']);
+            //$request->all();
+
+        $input['user_id'] = auth('api')->user()->id;
 
         $vacancy = $this->vacancyRepository->create($input);
 
@@ -103,6 +106,8 @@ class VacancyAPIController extends AppBaseController
         if (empty($vacancy)) {
             return $this->sendError('Vacancy not found');
         }
+
+        $input['user_id'] = auth('api')->user()->id;
 
         $vacancy = $this->vacancyRepository->update($input, $id);
 

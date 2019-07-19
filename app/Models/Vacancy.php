@@ -62,5 +62,21 @@ class Vacancy extends Model
         'description' => 'required'
     ];
 
+    public function user(){
+        return $this->belongsTo('App\Models\User');
+    }
+
+    public function candidate(){
+        return $this->hasMany('App\Models\Candidate');
+    }
+
+
+
+
+
+
+
+
+
     
 }

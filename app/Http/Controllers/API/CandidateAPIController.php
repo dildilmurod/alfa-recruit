@@ -35,13 +35,29 @@ class CandidateAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $candidates = $this->candidateRepository->all(
-            $request->except(['skip', 'limit']),
-            $request->get('skip'),
-            $request->get('limit')
-        );
+//        $candidates = $this->candidateRepository->all(
+//            $request->except(['skip', 'limit']),
+//            $request->get('skip'),
+//            $request->get('limit')
+//        );
+        $candidates = Candidate::where([
+            ['status', '<>', 0],
+        ])->orderBy('id', 'desc')->get();
 
         return $this->sendResponse($candidates->toArray(), 'Candidates retrieved successfully');
+    }
+
+    public function gen_name($file)
+    {
+        //creates unique file name
+        $fileName = $file->getClientOriginalName();
+        $fileName = pathinfo($fileName, PATHINFO_FILENAME);
+        //just takes file extension
+        $ext = $file->getClientOriginalExtension();
+        //filename to store
+        $fileToStore = md5(uniqid($fileName)) . '.' . $ext;
+
+        return $fileToStore;
     }
 
     /**

@@ -71,5 +71,25 @@ class Candidate extends Model
         'file' => 'required'
     ];
 
+    public function vacancy(){
+        return $this->belongsTo('App\Models\Vacancy');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 }
