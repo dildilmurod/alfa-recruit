@@ -24,8 +24,11 @@ Route::post('/login', 'AuthController@login');
 
 Route::resource('vacancies', 'VacancyAPIController');
 Route::post('vacancies/{vacancies}', 'VacancyAPIController@update');
+Route::get('vacancies/deactivate/{vacancies}', 'VacancyAPIController@deactivate');
 
 Route::resource('candidates', 'CandidateAPIController');
+Route::post('candidates/{candidates}', 'CandidateAPIController@update');
+Route::get('candidates/deactivate/{candidates}', 'CandidateAPIController@deactivate');
 
 
 

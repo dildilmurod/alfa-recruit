@@ -35,6 +35,7 @@ class Candidate extends Model
         'experience',
         'vacancy_id',
         'file',
+        'status',
         'job_title'
     ];
 
@@ -52,6 +53,7 @@ class Candidate extends Model
         'citizenship' => 'string',
         'experience' => 'integer',
         'vacancy_id' => 'integer',
+        'status' => 'integer',
         'file' => 'string',
         'job_title' => 'string'
     ];

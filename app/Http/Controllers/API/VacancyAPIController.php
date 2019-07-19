@@ -35,11 +35,14 @@ class VacancyAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $vacancies = $this->vacancyRepository->all(
-            $request->except(['skip', 'limit']),
-            $request->get('skip'),
-            $request->get('limit')
-        );
+//        $vacancies = $this->vacancyRepository->all(
+//            $request->except(['skip', 'limit']),
+//            $request->get('skip'),
+//            $request->get('limit')
+//        );
+        $vacancies = Vacancy::where([
+            ['status', '<>', 0],
+        ])->orderBy('id', 'desc')->get();
 
         return $this->sendResponse($vacancies->toArray(), 'Vacancies retrieved successfully');
     }
@@ -116,6 +119,25 @@ class VacancyAPIController extends AppBaseController
      *
      * @return Response
      */
+
+    public function deactivate($id)
+    {
+        /** @var Vacancy $vacancy */
+        $vacancy = $this->vacancyRepository->find($id);
+
+        if (empty($vacancy)) {
+            return $this->sendError('Vacancy not found');
+        }
+
+        $vacancy->status = 2;
+        $vacancy->save();
+
+//        $vacancy->delete();
+
+        return $this->sendResponse($id, 'Vacancy deactivated successfully');
+    }
+
+
     public function destroy($id)
     {
         /** @var Vacancy $vacancy */
@@ -125,7 +147,10 @@ class VacancyAPIController extends AppBaseController
             return $this->sendError('Vacancy not found');
         }
 
-        $vacancy->delete();
+        $vacancy->status = 0;
+        $vacancy->save();
+
+//        $vacancy->delete();
 
         return $this->sendResponse($id, 'Vacancy deleted successfully');
     }

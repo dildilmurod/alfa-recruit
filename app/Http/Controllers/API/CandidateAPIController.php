@@ -106,6 +106,25 @@ class CandidateAPIController extends AppBaseController
         return $this->sendResponse($candidate->toArray(), 'Candidate updated successfully');
     }
 
+
+
+    public function deactivate($id)
+    {
+        /** @var Candidate $vacancy */
+        $candidate = $this->candidateRepository->find($id);
+
+        if (empty($candidate)) {
+            return $this->sendError('Candidate not found');
+        }
+
+        $candidate->status = 2;
+        $candidate->save();
+
+//        $candidate->delete();
+
+        return $this->sendResponse($id, 'Candidate deactivated successfully');
+    }
+
     /**
      * Remove the specified Candidate from storage.
      * DELETE /candidates/{id}
@@ -125,8 +144,19 @@ class CandidateAPIController extends AppBaseController
             return $this->sendError('Candidate not found');
         }
 
-        $candidate->delete();
+        $candidate->status = 0;
+        $candidate->save();
+
+//        $candidate->delete();
 
         return $this->sendResponse($id, 'Candidate deleted successfully');
     }
+
+
+
+
+
+
+
+
 }
