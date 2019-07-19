@@ -52,3 +52,5 @@ Route::get('candidates/deactivate/{candidates}', 'CandidateAPIController@deactiv
 
 
 Route::resource('comments', 'CommentAPIController');
+
+Route::resource('tags', 'TagAPIController');
