@@ -53,7 +53,9 @@ class CommentAPIController extends AppBaseController
      */
     public function store(CreateCommentAPIRequest $request)
     {
-        $input = $request->all();
+        $input = $request->except(['user_id']);
+
+        $input['user_id'] = auth('api')->user()->id;
 
         $comment = $this->commentRepository->create($input);
 

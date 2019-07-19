@@ -35,6 +35,8 @@ class Candidate extends Model
         'experience',
         'vacancy_id',
         'file',
+        'phone',
+        'email',
         'status',
         'job_title'
     ];
@@ -50,6 +52,8 @@ class Candidate extends Model
         'name' => 'string',
         'dob' => 'string',
         'sex' => 'string',
+        'email' => 'string',
+        'phone' => 'string',
         'citizenship' => 'string',
         'experience' => 'integer',
         'vacancy_id' => 'integer',
@@ -68,7 +72,7 @@ class Candidate extends Model
         'dob' => 'required',
         'sex' => 'required',
         'citizenship' => 'required',
-        'file' => 'required'
+        'file' => 'required|mimes:docx,pdf,doc,zip|max:100000',
     ];
 
     public function vacancy(){

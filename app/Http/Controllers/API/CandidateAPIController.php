@@ -70,7 +70,17 @@ class CandidateAPIController extends AppBaseController
      */
     public function store(CreateCandidateAPIRequest $request)
     {
-        $input = $request->all();
+        $input = $request->except(['file']);//$request->all();
+
+        $file = $request->file('file');
+
+        if ($file) {
+            //$input['filesize'] = $file->getSize();
+            $fileToStore = $this->gen_name($file);
+
+            $file->move('candidate_files', $fileToStore);
+            $input['file'] = $fileToStore;
+        }
 
         $candidate = $this->candidateRepository->create($input);
 
