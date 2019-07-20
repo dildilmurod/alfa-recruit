@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="81a376cb-374b-43f4-a78b-dd788ce78180" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/API/CandidateAPIController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/API/CandidateAPIController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Controllers/API/VacancyAPIController.php" afterPath="$PROJECT_DIR$/app/Http/Controllers/API/VacancyAPIController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Http/Kernel.php" afterPath="$PROJECT_DIR$/app/Http/Kernel.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Models/Candidate.php" afterPath="$PROJECT_DIR$/app/Models/Candidate.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Models/Comment.php" afterPath="$PROJECT_DIR$/app/Models/Comment.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Models/Tag.php" afterPath="$PROJECT_DIR$/app/Models/Tag.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/database/migrations/2019_07_19_164935_create_candidate_tag_table.php" afterPath="$PROJECT_DIR$/database/migrations/2019_07_19_164935_create_candidate_tag_table.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -64,7 +58,7 @@
         <entry file="file://$PROJECT_DIR$/app/Http/Kernel.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="506">
-              <caret line="57" column="61" lean-forward="true" selection-start-line="57" selection-start-column="61" selection-end-line="57" selection-end-column="61" />
+              <caret line="57" column="65" lean-forward="false" selection-start-line="57" selection-start-column="65" selection-end-line="57" selection-end-column="65" />
               <folding />
             </state>
           </provider>
@@ -458,12 +452,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1563340970564</updated>
-      <workItem from="1563340971991" duration="10251000" />
+      <workItem from="1563340971991" duration="10297000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="10251000" />
+    <option name="totallyTimeSpent" value="10297000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-13" y="-13" width="2762" height="1770" extended-state="6" />
@@ -797,7 +791,7 @@
     <entry file="file://$PROJECT_DIR$/app/Http/Kernel.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="506">
-          <caret line="57" column="61" lean-forward="true" selection-start-line="57" selection-start-column="61" selection-end-line="57" selection-end-column="61" />
+          <caret line="57" column="65" lean-forward="false" selection-start-line="57" selection-start-column="65" selection-end-line="57" selection-end-column="65" />
           <folding />
         </state>
       </provider>
