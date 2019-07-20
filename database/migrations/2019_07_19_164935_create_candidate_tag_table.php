@@ -15,6 +15,8 @@ class CreateCandidateTagTable extends Migration
     {
         Schema::create('candidate_tag', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('candidate_id');
+            $table->integer('tag_id');
             $table->timestamps();
         });
     }

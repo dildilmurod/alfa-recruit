@@ -83,6 +83,7 @@ class VacancyAPIController extends AppBaseController
         if (empty($vacancy)) {
             return $this->sendError('Vacancy not found');
         }
+        $vacancy->candidate;
 
         return $this->sendResponse($vacancy->toArray(), 'Vacancy retrieved successfully');
     }

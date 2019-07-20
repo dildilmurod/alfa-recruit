@@ -23,7 +23,7 @@ class CandidateAPIController extends AppBaseController
     public function __construct(CandidateRepository $candidateRepo)
     {
         $this->candidateRepository = $candidateRepo;
-        $this->middleware('auth:api', ['except' => ['']]);
+        $this->middleware('auth:api', ['except' => ['store']]);
     }
 
     /**
@@ -103,6 +103,8 @@ class CandidateAPIController extends AppBaseController
         if (empty($candidate)) {
             return $this->sendError('Candidate not found');
         }
+
+        $candidate->comment;
 
         return $this->sendResponse($candidate->toArray(), 'Candidate retrieved successfully');
     }

@@ -22,7 +22,7 @@ class Comment extends Model
 
     public $fillable = [
         'text',
-        'vacancy_id',
+        'candidate_id',
         'user_id'
     ];
 
@@ -34,7 +34,7 @@ class Comment extends Model
     protected $casts = [
         'id' => 'integer',
         'text' => 'string',
-        'vacancy_id' => 'integer',
+        'candidate_id' => 'integer',
         'user_id' => 'integer'
     ];
 
@@ -45,8 +45,23 @@ class Comment extends Model
      */
     public static $rules = [
         'text' => 'required',
-        'vacancy_id' => 'required'
+        'candidate_id' => 'required'
     ];
+
+    public function candidate(){
+        return $this->belongsTo('App\Models\Candidate');
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     
 }

@@ -79,6 +79,13 @@ class Candidate extends Model
         return $this->belongsTo('App\Models\Vacancy');
     }
 
+    public function tags(){
+        return $this->belongsToMany('App\Models\Tag', 'candidate_tag', 'candidate_id', 'tag_id');
+    }
+
+    public function comment(){
+        return $this->hasMany('App\Models\Comment');
+    }
 
 
 

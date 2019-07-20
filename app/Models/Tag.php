@@ -41,5 +41,13 @@ class Tag extends Model
         
     ];
 
+    public function candidates(){
+        return $this->belongsToMany('App\Models\Candidate', 'candidate_tag', 'tag_id', 'candidate_id' );
+    }
+
+
+
+
+
     
 }
