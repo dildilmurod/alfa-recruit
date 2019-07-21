@@ -29,6 +29,7 @@ Route::get('vacancies/deactivate/{vacancies}', 'VacancyAPIController@deactivate'
 Route::resource('candidates', 'CandidateAPIController');
 Route::post('candidates/{candidates}', 'CandidateAPIController@update');
 Route::get('candidates/deactivate/{candidates}', 'CandidateAPIController@deactivate');
+Route::post('candidates/set-tags/{candidates}', 'CandidateAPIController@set_tags');
 
 
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\API\CreateCandidateAPIRequest;
 use App\Http\Requests\API\UpdateCandidateAPIRequest;
 use App\Models\Candidate;
+use App\Models\Tag;
 use App\Repositories\CandidateRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
@@ -14,7 +15,6 @@ use Response;
  * Class CandidateController
  * @package App\Http\Controllers\API
  */
-
 class CandidateAPIController extends AppBaseController
 {
     /** @var  CandidateRepository */
@@ -105,9 +105,11 @@ class CandidateAPIController extends AppBaseController
         }
 
         $candidate->comment;
+        $candidate->tags;
 
         return $this->sendResponse($candidate->toArray(), 'Candidate retrieved successfully');
     }
+
 
     /**
      * Update the specified Candidate in storage.
@@ -134,6 +136,43 @@ class CandidateAPIController extends AppBaseController
         return $this->sendResponse($candidate->toArray(), 'Candidate updated successfully');
     }
 
+    public function set_tags($id, Request $request)
+    {
+//        $input = $request->all();
+
+        /** @var Candidate $candidate */
+        $candidate = $this->candidateRepository->find($id);
+
+        if (empty($candidate)) {
+            return $this->sendError('Candidate not found');
+        }
+        $tags = $request->except(['']);
+
+//        return $tags['tag'][0];
+        $tag_list = [];
+        foreach ($tags['tag'] as $tag) {
+            $db = Tag::where('text', $tag)->first();
+            if (empty($db)) {
+                $model = Tag::firstOrNew(['text' => $tag]);
+                $model->text = $tag;
+                $model->save();
+            }
+            else{
+                $model = $db;
+            }
+            array_push($tag_list, $model->id);
+        }
+//        return $tag_list;
+        if (!empty($tag_list)) {
+            $candidate->tags()->detach();
+            $candidate->tags()->attach($tag_list);
+
+        }
+
+//        $candidate = $this->candidateRepository->update($input, $id);
+
+        return $this->sendResponse($candidate->toArray(), 'Candidate updated successfully');
+    }
 
 
     public function deactivate($id)
@@ -179,12 +218,6 @@ class CandidateAPIController extends AppBaseController
 
         return $this->sendResponse($id, 'Candidate deleted successfully');
     }
-
-
-
-
-
-
 
 
 }
