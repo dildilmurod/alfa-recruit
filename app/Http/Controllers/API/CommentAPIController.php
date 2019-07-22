@@ -93,7 +93,7 @@ class CommentAPIController extends AppBaseController
      */
     public function update($id, UpdateCommentAPIRequest $request)
     {
-        $input = $request->all();
+        $input = $request->except(['user_id']);//$request->all();
 
         /** @var Comment $comment */
         $comment = $this->commentRepository->find($id);
@@ -101,6 +101,7 @@ class CommentAPIController extends AppBaseController
         if (empty($comment)) {
             return $this->sendError('Comment not found');
         }
+        $input['user_id'] = auth('api')->user()->id;
 
         $comment = $this->commentRepository->update($input, $id);
 

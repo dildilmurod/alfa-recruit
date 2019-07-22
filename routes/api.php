@@ -31,33 +31,17 @@ Route::post('candidates/{candidates}', 'CandidateAPIController@update');
 Route::get('candidates/deactivate/{candidates}', 'CandidateAPIController@deactivate');
 Route::post('candidates/set-tags/{candidates}', 'CandidateAPIController@set_tags');
 
-Route::get('test', function(){
-    $user = \App\User::find(1);
-    $invoice = "Test notification";
-    $user->notify(new \App\Notifications\CandidateShared($invoice));
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Route::resource('comments', 'CommentAPIController');
+Route::post('comments/{comments}', 'CommentAPIController@update');
+//
+//Route::get('test', function(){
+//    $user = \App\User::find(1);
+//    $user->notify(new \App\Notifications\CandidateShared);
+//});
+
+
+
+
+
 
 Route::resource('tags', 'TagAPIController');

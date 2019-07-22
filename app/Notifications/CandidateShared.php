@@ -55,7 +55,7 @@ class CandidateShared extends Notification
     public function toArray($notifiable)
     {
         return [
-            'data'=>$notifiable
+            'data'=>'Test notification'
         ];
     }
 }
