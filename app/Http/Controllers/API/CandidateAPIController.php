@@ -42,7 +42,7 @@ class CandidateAPIController extends AppBaseController
 //        );
         $candidates = Candidate::where([
             ['status', '<>', 0],
-        ])->orderBy('id', 'desc')->get();
+        ])->orderBy('id', 'desc')->paginate(10);
 
         return $this->sendResponse($candidates->toArray(), 'Candidates retrieved successfully');
     }

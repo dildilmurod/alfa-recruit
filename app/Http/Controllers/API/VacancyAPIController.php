@@ -42,7 +42,12 @@ class VacancyAPIController extends AppBaseController
 //        );
         $vacancies = Vacancy::where([
             ['status', '<>', 0],
-        ])->orderBy('id', 'desc')->get();
+        ])->orderBy('id', 'desc')->paginate(10);
+
+        foreach ($vacancies as $vacancy){
+            $vacancy->candidate_count = $vacancy->candidate()->count();
+        }
+
 
         return $this->sendResponse($vacancies->toArray(), 'Vacancies retrieved successfully');
     }
