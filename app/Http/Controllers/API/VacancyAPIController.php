@@ -60,6 +60,7 @@ class VacancyAPIController extends AppBaseController
      *
      * @return Response
      */
+
     public function store(CreateVacancyAPIRequest $request)
     {
         $input = $request->except(['user_id']);

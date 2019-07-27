@@ -16,9 +16,14 @@ class CandidateShared extends Notification
      *
      * @return void
      */
-    public function __construct()
+    protected $my_notification;
+
+    public function __construct($msg)
+
     {
-        //
+
+        $this->my_notification = $msg;
+
     }
 
     /**
@@ -29,6 +34,7 @@ class CandidateShared extends Notification
      */
     public function via($notifiable)
     {
+
         return ['database'];
     }
 
@@ -54,8 +60,13 @@ class CandidateShared extends Notification
      */
     public function toArray($notifiable)
     {
+
         return [
-            'data'=>'Test notification'
+            'candidates'=>$this->my_notification
         ];
     }
+
+
+
+
 }

@@ -52,8 +52,9 @@ class AuthController extends Controller
             $user->password = bcrypt($request->password); //password through bcrypt
             $user->save();
 
-            $response = $this->get_token($request->email, $request->password);
 
+            $response = $this->get_token($request->email, $request->password);
+//            print('sdf');die();
             return response(
                 [
                     'data' => json_decode((string)$response->getBody(), true)

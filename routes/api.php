@@ -1,6 +1,8 @@
 <?php
 
+use App\Notifications\CandidateShared;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,14 +33,21 @@ Route::post('candidates/{candidates}', 'CandidateAPIController@update');
 Route::get('candidates/deactivate/{candidates}', 'CandidateAPIController@deactivate');
 Route::post('candidates/set-tags/{candidates}', 'CandidateAPIController@set_tags');
 
+Route::get('my-notifications', 'CandidateAPIController@my_notifications');
+Route::post('share-candidates/{user}', 'CandidateAPIController@share_candidates');
+Route::post('notification/{id}', 'CandidateAPIController@notification');
+
+
 Route::resource('comments', 'CommentAPIController');
 Route::post('comments/{comments}', 'CommentAPIController@update');
 //
 //Route::get('test', function(){
-//    $user = \App\User::find(1);
-//    $user->notify(new \App\Notifications\CandidateShared);
+//    $user = \App\User::find(2);
+//
+//    $test = 'My notes';
+//    $user->notify(new \App\Notifications\CandidateShared($test));
+////    Notification::send($user, new CandidateShared($test));
 //});
-
 
 
 

@@ -6,9 +6,14 @@ use App\Http\Requests\API\CreateCandidateAPIRequest;
 use App\Http\Requests\API\UpdateCandidateAPIRequest;
 use App\Models\Candidate;
 use App\Models\Tag;
+use App\Notifications\CandidateShared;
 use App\Repositories\CandidateRepository;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Response;
 
 /**
@@ -68,6 +73,78 @@ class CandidateAPIController extends AppBaseController
      *
      * @return Response
      */
+
+    public function my_notifications(){
+        $notifications = auth('api')->user()->notifications;
+        return $this->sendResponse($notifications, 'Notifications retrieved successfully');
+
+    }
+
+    public  function share_candidates($id, Request $request){
+
+
+        $user = User::find($id);
+        $candidates = $request->except(['']);
+
+        $can_list = $candidates['candidate'];
+
+
+        if (!empty($can_list)) {
+            Notification::send($user, new CandidateShared($can_list));
+            return response()->json(
+                [
+                    'success' => true,
+                    'data'=>[],
+                    'message'=>'Notification sent successfully'
+                ],
+                201);
+        }
+        else{
+            return response()->json(
+                [
+                    'success' => false,
+                    'data'=>[],
+                    'message'=>'Notification sent failed'
+                ]);
+        }
+
+
+    }
+
+    public function notification($id){
+        $notification = DB::table('notifications')
+            ->where('id', $id)
+            ->first();
+        if (empty($notification)) {
+            return $this->sendError('Notification is not found');
+        }
+        if($notification->notifiable_id == auth('api')->user()->id) {
+            auth('api')->user()->unreadNotifications->markAsRead();
+        }
+        else{
+            return response()->json(
+                [
+                    'success' => false,
+                    'data'=>[],
+                    'message'=>'You can not access this, so it is not sent to you'
+                ]);
+        }
+
+        $can_list = json_decode($notification->data, TRUE);
+        $candidates = Candidate::whereIn('id', $can_list['candidates'])->get();
+
+        return response()->json(
+            [
+                'success' => true,
+                'data'=>$candidates,
+                'message'=>'Candidates retrieved successfully'
+            ]);
+
+
+
+    }
+
+
     public function store(CreateCandidateAPIRequest $request)
     {
         $input = $request->except(['file']);//$request->all();
@@ -148,7 +225,6 @@ class CandidateAPIController extends AppBaseController
         }
         $tags = $request->except(['']);
 
-//        return $tags['tag'][0];
         $tag_list = [];
         foreach ($tags['tag'] as $tag) {
             $db = Tag::where('text', $tag)->first();
