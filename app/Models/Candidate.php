@@ -38,6 +38,7 @@ class Candidate extends Model
         'phone',
         'email',
         'status',
+        'is_read',
         'job_title'
     ];
 
@@ -58,6 +59,7 @@ class Candidate extends Model
         'experience' => 'integer',
         'vacancy_id' => 'integer',
         'status' => 'integer',
+        'is_read' => 'integer',
         'file' => 'string',
         'job_title' => 'string'
     ];

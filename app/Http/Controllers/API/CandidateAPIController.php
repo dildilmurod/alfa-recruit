@@ -184,6 +184,8 @@ class CandidateAPIController extends AppBaseController
         $candidate->comment;
         $candidate->tags;
 
+        $candidate->is_read = 1;
+
         return $this->sendResponse($candidate->toArray(), 'Candidate retrieved successfully');
     }
 
