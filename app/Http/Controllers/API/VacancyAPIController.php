@@ -4,10 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\API\CreateVacancyAPIRequest;
 use App\Http\Requests\API\UpdateVacancyAPIRequest;
+use App\Models\Candidate;
 use App\Models\Vacancy;
 use App\Repositories\VacancyRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
+use Illuminate\Support\Facades\DB;
 use Response;
 
 /**
@@ -44,8 +46,17 @@ class VacancyAPIController extends AppBaseController
             ['status', '<>', 0],
         ])->orderBy('id', 'desc')->paginate(10);
 
+
         foreach ($vacancies as $vacancy){
+            $read_num = DB::table('candidates')
+                ->where([
+                    ['is_read', 1],
+                    ['vacancy_id', $vacancy->id]
+                ])->count();
+
+            $user = $vacancy->user;
             $vacancy->candidate_count = $vacancy->candidate()->count();
+            $vacancy->candidate_read_count = $read_num;
         }
 
 
@@ -90,6 +101,7 @@ class VacancyAPIController extends AppBaseController
             return $this->sendError('Vacancy not found');
         }
         $vacancy->candidate;
+        $vacancy->user;
 
         return $this->sendResponse($vacancy->toArray(), 'Vacancy retrieved successfully');
     }
