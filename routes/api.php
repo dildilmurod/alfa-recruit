@@ -32,6 +32,7 @@ Route::resource('candidates', 'CandidateAPIController');
 Route::post('candidates/{candidates}', 'CandidateAPIController@update');
 Route::get('candidates/deactivate/{candidates}', 'CandidateAPIController@deactivate');
 Route::post('candidates/set-tags/{candidates}', 'CandidateAPIController@set_tags');
+Route::post('search-tag', 'CandidateAPIController@search_tag');
 
 Route::get('my-notifications', 'CandidateAPIController@my_notifications');
 Route::post('share-candidates/{user}', 'CandidateAPIController@share_candidates');

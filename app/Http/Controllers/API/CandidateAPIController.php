@@ -252,6 +252,26 @@ class CandidateAPIController extends AppBaseController
         return $this->sendResponse($candidate->toArray(), 'Candidate updated successfully');
     }
 
+    public function search_tag(Request $request){
+        $input = $request->except(['']);
+        $tag = Tag::where('text', $request['tag'])->first();
+        if(!empty($tag)){
+            $tag->candidates;
+            return response()->json(
+                [
+                    'success' => true,
+                    'data'=>$tag,
+                    'message'=>'Candidates retrieved successfully'
+                ],
+                201);
+        }
+        return $this->sendError('Nothing found');
+
+
+
+
+    }
+
 
     public function deactivate($id)
     {
