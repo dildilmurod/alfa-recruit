@@ -41,13 +41,9 @@ class CandidateAPIController extends AppBaseController
      * @param Request $request
      * @return Response
      */
+
     public function index(Request $request)
     {
-//        $candidates = $this->candidateRepository->all(
-//            $request->except(['skip', 'limit']),
-//            $request->get('skip'),
-//            $request->get('limit')
-//        );
         $candidates = Candidate::where([
             ['status', '<>', 0],
         ])->orderBy('id', 'desc')->paginate(10);
@@ -55,6 +51,8 @@ class CandidateAPIController extends AppBaseController
         return $this->sendResponse($candidates->toArray(), 'Candidates retrieved successfully');
     }
 
+
+    //filename generation
     public function gen_name($file)
     {
         //creates unique file name
@@ -77,39 +75,27 @@ class CandidateAPIController extends AppBaseController
      * @return Response
      */
 
+    //returns current authorized user notifications
     public function my_notifications()
     {
         $notifications = auth('api')->user()->notifications;
         return $this->sendResponse($notifications, 'Notifications retrieved successfully');
-
     }
 
+    //sending several candidates to one user
+    // $id is user id
     public function share_candidates($id, Request $request)
     {
-
-
         $user = User::find($id);
         $candidates = $request->except(['']);
-
         $can_list = $candidates['candidate'];
 
-
         if (!empty($can_list)) {
+            //sends notifications
             Notification::send($user, new CandidateShared($can_list));
-            return response()->json(
-                [
-                    'success' => true,
-                    'data' => [],
-                    'message' => 'Notification sent successfully'
-                ],
-                201);
+            return $this->sendResponse([], 'Notification sent successfully');
         } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'data' => [],
-                    'message' => 'Notification sent failed'
-                ]);
+            return $this->sendError('Notification sent failed');
         }
 
 
@@ -118,31 +104,23 @@ class CandidateAPIController extends AppBaseController
     public function notification($id)
     {
         $notification = DB::table('notifications')
-            ->where('id', $id)
-            ->first();
+            ->where('id', $id)->first();
+
         if (empty($notification)) {
             return $this->sendError('Notification is not found');
         }
+
         if ($notification->notifiable_id == auth('api')->user()->id) {
             auth('api')->user()->unreadNotifications->markAsRead();
         } else {
-            return response()->json(
-                [
-                    'success' => false,
-                    'data' => [],
-                    'message' => 'You can not access this, so it is not sent to you'
-                ]);
+            return $this->sendError('You can not access this, so it does not belongs to you');
         }
 
+        //decodes json because candidates ids are saved in json array format
         $can_list = json_decode($notification->data, TRUE);
         $candidates = Candidate::whereIn('id', $can_list['candidates'])->get();
 
-        return response()->json(
-            [
-                'success' => true,
-                'data' => $candidates,
-                'message' => 'Candidates retrieved successfully'
-            ]);
+        return $this->sendResponse($candidates, 'Candidate retrieved successfully');
 
 
     }
@@ -156,7 +134,7 @@ class CandidateAPIController extends AppBaseController
         foreach ($users as $user) {
             Mail::send('gmail', $data, function ($message) use ($user) {
                 $message->to($user->email, $user->name)
-                    ->subject('From Alfa-talent With Gmail');
+                    ->subject('New candidate in Alfa-talent');
                 $message->from('studentblog98@gmail.com', ' New candidate');
                 usleep(200000); //wait for 0.2 sec between mails
             });
@@ -284,7 +262,6 @@ class CandidateAPIController extends AppBaseController
 
         }
 
-
         return $this->sendResponse($candidate->toArray(), 'Candidate updated successfully');
     }
 
@@ -295,13 +272,8 @@ class CandidateAPIController extends AppBaseController
         $tag = Tag::where('text', $request['tag'])->first();
         if (!empty($tag)) {
             $tag->candidates;
-            return response()->json(
-                [
-                    'success' => true,
-                    'data' => $tag,
-                    'message' => 'Candidates retrieved successfully'
-                ],
-                201);
+            return $this->sendResponse($tag, 'Tags retrieved successfully');
+
         }
         return $this->sendError('Nothing found');
 
@@ -321,7 +293,6 @@ class CandidateAPIController extends AppBaseController
         $candidate->status = 2;
         $candidate->save();
 
-//        $candidate->delete();
 
         return $this->sendResponse($id, 'Candidate deactivated successfully');
     }
