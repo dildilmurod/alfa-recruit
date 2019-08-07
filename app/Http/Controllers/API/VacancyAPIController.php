@@ -26,6 +26,7 @@ class VacancyAPIController extends AppBaseController
     {
         $this->vacancyRepository = $vacancyRepo;
         $this->middleware('auth:api', ['except' => ['']]);
+        $this->middleware('admin', ['only' => ['destroy', 'deactivate']]);
     }
 
     /**
@@ -42,11 +43,21 @@ class VacancyAPIController extends AppBaseController
 //            $request->get('skip'),
 //            $request->get('limit')
 //        );
-        $vacancies = Vacancy::where([
-            ['status', '<>', 0],
-        ])->orderBy('id', 'desc')->paginate(10);
+        //if user is not admin shows only vacancies created by him/her
+        //shows active and not active (but not destroyed) vacancies
+        if (auth('api')->user()->role_id != 0) {
+            $vacancies = Vacancy::where([
+                ['status', '<>', 0],
+                ['user_id', auth('api')->user()->id]
+            ])->orderBy('id', 'desc')->paginate(10);
+        }
+        else{
+            $vacancies = Vacancy::where([
+                ['status', '<>', 0],
+            ])->orderBy('id', 'desc')->paginate(10);
+        }
 
-
+        //for every vacancy counts number of unread and total candidates
         foreach ($vacancies as $vacancy){
             $read_num = DB::table('candidates')
                 ->where([
@@ -74,10 +85,12 @@ class VacancyAPIController extends AppBaseController
 
     public function store(CreateVacancyAPIRequest $request)
     {
-        $input = $request->except(['user_id']);
+        $input = $request->except([]);
             //$request->all();
-
-        $input['user_id'] = auth('api')->user()->id;
+        //if user_id is not sent gets id of current user
+        if(!$request->user_id && empty($request->user_id)) {
+            $input['user_id'] = auth('api')->user()->id;
+        }
 
         $vacancy = $this->vacancyRepository->create($input);
 
@@ -100,6 +113,10 @@ class VacancyAPIController extends AppBaseController
         if (empty($vacancy)) {
             return $this->sendError('Vacancy not found');
         }
+        if (auth('api')->user()->role_id != 0 && $vacancy->user_id != auth('api')->user()->id) {
+            return $this->sendError('Vacancy is not yours');
+        }
+
         $vacancy->candidate;
         $vacancy->user;
 
@@ -125,7 +142,10 @@ class VacancyAPIController extends AppBaseController
         if (empty($vacancy)) {
             return $this->sendError('Vacancy not found');
         }
-
+        //if user is not admin and vacancy is not created by him/her sends error
+        if(auth('api')->user()->role_id != 0 && $vacancy->user_id != auth('api')->user()->id){
+            return $this->sendError('Vacancy is not yours or you should be admin');
+        }
         $input['user_id'] = auth('api')->user()->id;
 
         $vacancy = $this->vacancyRepository->update($input, $id);

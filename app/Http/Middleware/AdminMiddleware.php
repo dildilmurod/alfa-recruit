@@ -21,14 +21,14 @@ class AdminMiddleware
             }
             return response()->json(
                 [
-                    'message' => 'Unauthorized. You are not Admin',
-                    'status'=>false
-
+                    'success' => false,
+                    'data' => [],
+                    'message' => 'Unauthorized. You are not Admin'
                 ],
                 401);
         }
         return response()->json(
-            ['msg' => 'Please log in'],
+            ['msg' => 'Please log in as Admin'],
             401);
 
 

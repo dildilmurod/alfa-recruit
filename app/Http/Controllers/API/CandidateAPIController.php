@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Response;
 
@@ -29,6 +30,8 @@ class CandidateAPIController extends AppBaseController
     {
         $this->candidateRepository = $candidateRepo;
         $this->middleware('auth:api', ['except' => ['store']]);
+        $this->middleware('admin', ['only' => ['destroy', 'deactivate']]);
+
     }
 
     /**
@@ -74,13 +77,15 @@ class CandidateAPIController extends AppBaseController
      * @return Response
      */
 
-    public function my_notifications(){
+    public function my_notifications()
+    {
         $notifications = auth('api')->user()->notifications;
         return $this->sendResponse($notifications, 'Notifications retrieved successfully');
 
     }
 
-    public  function share_candidates($id, Request $request){
+    public function share_candidates($id, Request $request)
+    {
 
 
         $user = User::find($id);
@@ -94,39 +99,38 @@ class CandidateAPIController extends AppBaseController
             return response()->json(
                 [
                     'success' => true,
-                    'data'=>[],
-                    'message'=>'Notification sent successfully'
+                    'data' => [],
+                    'message' => 'Notification sent successfully'
                 ],
                 201);
-        }
-        else{
+        } else {
             return response()->json(
                 [
                     'success' => false,
-                    'data'=>[],
-                    'message'=>'Notification sent failed'
+                    'data' => [],
+                    'message' => 'Notification sent failed'
                 ]);
         }
 
 
     }
 
-    public function notification($id){
+    public function notification($id)
+    {
         $notification = DB::table('notifications')
             ->where('id', $id)
             ->first();
         if (empty($notification)) {
             return $this->sendError('Notification is not found');
         }
-        if($notification->notifiable_id == auth('api')->user()->id) {
+        if ($notification->notifiable_id == auth('api')->user()->id) {
             auth('api')->user()->unreadNotifications->markAsRead();
-        }
-        else{
+        } else {
             return response()->json(
                 [
                     'success' => false,
-                    'data'=>[],
-                    'message'=>'You can not access this, so it is not sent to you'
+                    'data' => [],
+                    'message' => 'You can not access this, so it is not sent to you'
                 ]);
         }
 
@@ -136,12 +140,33 @@ class CandidateAPIController extends AppBaseController
         return response()->json(
             [
                 'success' => true,
-                'data'=>$candidates,
-                'message'=>'Candidates retrieved successfully'
+                'data' => $candidates,
+                'message' => 'Candidates retrieved successfully'
             ]);
 
 
+    }
 
+    //function sends email by gmail service
+    private function sendgmail($name, $title, $file, $vacancy)
+    {
+        $data = ['name' => $name, "title" => $title, "file" => $file, "vacancy" => $vacancy];
+
+        $users = User::where('role_id', 0)->get();
+        foreach ($users as $user) {
+            Mail::send('gmail', $data, function ($message) use ($user) {
+                $message->to($user->email, $user->name)
+                    ->subject('From Alfa-talent With Gmail');
+                $message->from('studentblog98@gmail.com', ' New candidate');
+                usleep(200000); //wait for 0.2 sec between mails
+            });
+        }
+
+        if (Mail::failures()) {
+            return false;//response()->Fail('Sorry! Please try again latter');
+        } else {
+            return true;//response()->json('Yes, You have sent email to GMAIL from LARAVEL !!');
+        }
     }
 
 
@@ -150,7 +175,6 @@ class CandidateAPIController extends AppBaseController
         $input = $request->except(['file']);//$request->all();
 
         $file = $request->file('file');
-
         if ($file) {
             //$input['filesize'] = $file->getSize();
             $fileToStore = $this->gen_name($file);
@@ -160,6 +184,19 @@ class CandidateAPIController extends AppBaseController
         }
 
         $candidate = $this->candidateRepository->create($input);
+
+        $vacancy = $candidate->vacancy;
+        $vacancy = $vacancy->title;
+        //if vacancy is not set for candidate sends empty vacancy title
+        if (empty($vacancy) || is_null($vacancy)) {
+            $vacancy = '';
+        }
+
+        $this->sendgmail(
+            $input['name'], $input['job_title'],
+            'http://alfa-talent.000webhostapp.com/candidate_files/' . $input['file'],
+            $vacancy);
+
 
         return $this->sendResponse($candidate->toArray(), 'Candidate saved successfully');
     }
@@ -215,10 +252,10 @@ class CandidateAPIController extends AppBaseController
         return $this->sendResponse($candidate->toArray(), 'Candidate updated successfully');
     }
 
+
+    //setting tags for specific candidate
     public function set_tags($id, Request $request)
     {
-//        $input = $request->all();
-
         /** @var Candidate $candidate */
         $candidate = $this->candidateRepository->find($id);
 
@@ -230,44 +267,43 @@ class CandidateAPIController extends AppBaseController
         $tag_list = [];
         foreach ($tags['tag'] as $tag) {
             $db = Tag::where('text', $tag)->first();
+            //if tag does not exist in DB, creates new one and appends
+            //otherwise appends existing one
             if (empty($db)) {
                 $model = Tag::firstOrNew(['text' => $tag]);
                 $model->text = $tag;
                 $model->save();
-            }
-            else{
+            } else {
                 $model = $db;
             }
             array_push($tag_list, $model->id);
         }
-//        return $tag_list;
         if (!empty($tag_list)) {
             $candidate->tags()->detach();
             $candidate->tags()->attach($tag_list);
 
         }
 
-//        $candidate = $this->candidateRepository->update($input, $id);
 
         return $this->sendResponse($candidate->toArray(), 'Candidate updated successfully');
     }
 
-    public function search_tag(Request $request){
+    //searchs candidates by tag
+    public function search_tag(Request $request)
+    {
         $input = $request->except(['']);
         $tag = Tag::where('text', $request['tag'])->first();
-        if(!empty($tag)){
+        if (!empty($tag)) {
             $tag->candidates;
             return response()->json(
                 [
                     'success' => true,
-                    'data'=>$tag,
-                    'message'=>'Candidates retrieved successfully'
+                    'data' => $tag,
+                    'message' => 'Candidates retrieved successfully'
                 ],
                 201);
         }
         return $this->sendError('Nothing found');
-
-
 
 
     }

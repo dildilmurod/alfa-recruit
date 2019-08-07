@@ -15,13 +15,16 @@ use Illuminate\Support\Facades\Notification;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//Route::middleware('auth:api')->get('', function (Request $request) {
+//    return $request->user();
+//});
 
 
-Route::post('/register', 'AuthController@register');
+Route::post('/register', 'AuthController@register')->middleware('admin');
 Route::post('/login', 'AuthController@login');
+Route::post('/change-password', 'AuthController@change_password');
+Route::get('/user', 'AuthController@user_show');
+Route::get('/users', 'AuthController@users');
 
 
 Route::resource('vacancies', 'VacancyAPIController');
@@ -41,6 +44,11 @@ Route::post('notification/{id}', 'CandidateAPIController@notification');
 
 Route::resource('comments', 'CommentAPIController');
 Route::post('comments/{comments}', 'CommentAPIController@update');
+
+
+
+
+Route::get('test', 'TestController@index');
 //
 //Route::get('test', function(){
 //    $user = \App\User::find(2);
