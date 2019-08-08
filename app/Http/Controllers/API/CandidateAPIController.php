@@ -198,8 +198,10 @@ class CandidateAPIController extends AppBaseController
 
         $candidate->comment;
         $candidate->tags;
-
-        $candidate->is_read = 1;
+        //appends user data of each comment
+        foreach ($candidate->comment as $comment){
+            $comment->user;
+        }
 
         return $this->sendResponse($candidate->toArray(), 'Candidate retrieved successfully');
     }
@@ -262,7 +264,7 @@ class CandidateAPIController extends AppBaseController
 
         }
 
-        return $this->sendResponse($candidate->toArray(), 'Candidate updated successfully');
+        return $this->sendResponse($candidate->toArray(), 'Candidate tags are set successfully');
     }
 
     //searchs candidates by tag

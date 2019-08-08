@@ -23,6 +23,7 @@ class CommentAPIController extends AppBaseController
     public function __construct(CommentRepository $commentRepo)
     {
         $this->commentRepository = $commentRepo;
+        $this->middleware('auth:api', ['except' => ['']]);
     }
 
     /**
@@ -78,6 +79,7 @@ class CommentAPIController extends AppBaseController
         if (empty($comment)) {
             return $this->sendError('Comment not found');
         }
+        $comment->user;
 
         return $this->sendResponse($comment->toArray(), 'Comment retrieved successfully');
     }
@@ -125,6 +127,9 @@ class CommentAPIController extends AppBaseController
 
         if (empty($comment)) {
             return $this->sendError('Comment not found');
+        }
+        if($comment->user_id != auth('api')->user()->id){
+            return $this->sendError('Can not delete. Comment does not belongs to you');
         }
 
         $comment->delete();

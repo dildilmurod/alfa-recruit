@@ -52,6 +52,10 @@ class Comment extends Model
         return $this->belongsTo('App\Models\Candidate');
     }
 
+    public function user(){
+        return $this->belongsTo('App\User');
+    }
+
 
 
 
