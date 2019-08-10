@@ -18,11 +18,12 @@ class CandidateShared extends Notification
      */
     protected $my_notification;
 
-    public function __construct($msg)
+    public function __construct($msg, $user)
 
     {
 
         $this->my_notification = $msg;
+        $this->user = $user;
 
     }
 
@@ -62,7 +63,8 @@ class CandidateShared extends Notification
     {
 
         return [
-            'candidates'=>$this->my_notification
+            'candidates'=>$this->my_notification,
+            'user'=>$this->user
         ];
     }
 

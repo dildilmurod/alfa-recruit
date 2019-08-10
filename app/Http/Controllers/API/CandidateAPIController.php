@@ -79,6 +79,13 @@ class CandidateAPIController extends AppBaseController
     public function my_notifications()
     {
         $notifications = auth('api')->user()->notifications;
+        foreach ($notifications as $notification) {
+//            $list = json_decode($notification->data, TRUE);
+            if (array_key_exists('user', $notification->data)) {
+                $sender = User::find($notification->data['user']);
+                $notification->sender = $sender;
+            }
+        }
         return $this->sendResponse($notifications, 'Notifications retrieved successfully');
     }
 
@@ -89,10 +96,11 @@ class CandidateAPIController extends AppBaseController
         $user = User::find($id);
         $candidates = $request->except(['']);
         $can_list = $candidates['candidate'];
+        $sender = auth('api')->user()->id;
 
         if (!empty($can_list)) {
             //sends notifications
-            Notification::send($user, new CandidateShared($can_list));
+            Notification::send($user, new CandidateShared($can_list, $sender));
             return $this->sendResponse([], 'Notification sent successfully');
         } else {
             return $this->sendError('Notification sent failed');
@@ -119,9 +127,11 @@ class CandidateAPIController extends AppBaseController
         //decodes json because candidates ids are saved in json array format
         $can_list = json_decode($notification->data, TRUE);
         $candidates = Candidate::whereIn('id', $can_list['candidates'])->get();
+        if (empty($candidates)) {
+            return $this->sendError('Candidates are not found');
+        }
 
         return $this->sendResponse($candidates, 'Candidate retrieved successfully');
-
 
     }
 
@@ -151,15 +161,18 @@ class CandidateAPIController extends AppBaseController
     public function store(CreateCandidateAPIRequest $request)
     {
         $input = $request->except(['file']);//$request->all();
+        $input['file'] = '';
+        if ($request->filled('file')) {
+            $file = $request->file('file');
+            if ($file) {
+                //$input['filesize'] = $file->getSize();
+                $fileToStore = $this->gen_name($file);
 
-        $file = $request->file('file');
-        if ($file) {
-            //$input['filesize'] = $file->getSize();
-            $fileToStore = $this->gen_name($file);
-
-            $file->move('candidate_files', $fileToStore);
-            $input['file'] = $fileToStore;
+                $file->move('candidate_files', $fileToStore);
+                $input['file'] = $fileToStore;
+            }
         }
+
 
         $candidate = $this->candidateRepository->create($input);
 
@@ -199,7 +212,7 @@ class CandidateAPIController extends AppBaseController
         $candidate->comment;
         $candidate->tags;
         //appends user data of each comment
-        foreach ($candidate->comment as $comment){
+        foreach ($candidate->comment as $comment) {
             $comment->user;
         }
 

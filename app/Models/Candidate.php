@@ -74,7 +74,7 @@ class Candidate extends Model
         'dob' => 'required',
         'sex' => 'required',
         'citizenship' => 'required',
-        'file' => 'required|mimes:docx,pdf,doc,zip|max:100000',
+        'file' => 'mimes:docx,pdf,doc,zip|max:100000',
     ];
 
     public function vacancy(){
@@ -87,6 +87,10 @@ class Candidate extends Model
 
     public function comment(){
         return $this->hasMany('App\Models\Comment');
+    }
+
+    public function users(){
+        return $this->belongsToMany('App\Models\User', 'candidate_user', 'candidate_id', 'user_id');
     }
 
 
