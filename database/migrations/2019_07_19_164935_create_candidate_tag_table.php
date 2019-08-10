@@ -17,6 +17,7 @@ class CreateCandidateTagTable extends Migration
             $table->bigIncrements('id');
             $table->integer('candidate_id');
             $table->integer('tag_id');
+            $table->integer('thumb');
             $table->timestamps();
         });
     }

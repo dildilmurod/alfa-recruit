@@ -47,7 +47,9 @@ class User extends Authenticatable
 //    }
 
     public function candidates(){
-        return $this->belongsToMany('App\Models\Candidate', 'candidate_user', 'user_id', 'candidate_id' );
+        return $this->belongsToMany('App\Models\Candidate',
+            'candidate_user', 'user_id', 'candidate_id' )
+            ->withPivot('thumb');
     }
 
 

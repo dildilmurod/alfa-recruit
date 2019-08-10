@@ -90,7 +90,9 @@ class Candidate extends Model
     }
 
     public function users(){
-        return $this->belongsToMany('App\Models\User', 'candidate_user', 'candidate_id', 'user_id');
+        return $this->belongsToMany('App\User',
+            'candidate_user', 'candidate_id', 'user_id')
+            ->withPivot('thumb');
     }
 
 

@@ -132,10 +132,10 @@ class CandidateAPIController extends AppBaseController
         }
 
         return $this->sendResponse($candidates, 'Candidate retrieved successfully');
-
     }
 
     //function sends email by gmail service
+
     private function sendgmail($name, $title, $file, $vacancy)
     {
         $data = ['name' => $name, "title" => $title, "file" => $file, "vacancy" => $vacancy];
@@ -155,6 +155,37 @@ class CandidateAPIController extends AppBaseController
         } else {
             return true;//response()->json('Yes, You have sent email to GMAIL from LARAVEL !!');
         }
+    }
+
+    public function like_candidate($id, Request $request)
+    {
+        /** @var Candidate $candidate */
+        $candidate = $this->candidateRepository->find($id);
+
+        if (empty($candidate)) {
+            return $this->sendError('Candidate not found');
+        }
+        $like = $request->except(['']);
+        $user_id = auth('api')->user()->id;
+        $liked = DB::table('candidate_user')
+            ->where([
+                ['candidate_id', $id],
+                ['user_id', $user_id]
+            ])->first();
+
+        if (!empty($liked)) {
+            if ($liked->thumb == $like['like']) {
+                return $this->sendError('You have already liked or disliked it');
+            }
+            DB::table('candidate_user')->where([
+                ['candidate_id', $id],
+                ['user_id', $user_id]
+            ])->delete();
+        }
+        $candidate->users()->attach($user_id, ['thumb' => $like['like']]);
+
+
+        return $this->sendResponse([], 'Liked/Disliked');
     }
 
 
@@ -209,8 +240,13 @@ class CandidateAPIController extends AppBaseController
             return $this->sendError('Candidate not found');
         }
 
+        $likes = DB::table('candidate_user')->where([['candidate_id', $id], ['thumb', 1]])->count();
+        $dislikes = DB::table('candidate_user')->where([['candidate_id', $id], ['thumb', 0]])->count();
+
         $candidate->comment;
         $candidate->tags;
+        $candidate->likes = $likes;
+        $candidate->dislikes = $dislikes;
         //appends user data of each comment
         foreach ($candidate->comment as $comment) {
             $comment->user;

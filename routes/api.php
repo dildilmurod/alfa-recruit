@@ -42,6 +42,9 @@ Route::post('share-candidates/{user}', 'CandidateAPIController@share_candidates'
 Route::post('notification/{id}', 'CandidateAPIController@notification');
 
 
+Route::post('like-candidate/{id}', 'CandidateAPIController@like_candidate');
+
+
 Route::resource('comments', 'CommentAPIController');
 Route::post('comments/{comments}', 'CommentAPIController@update');
 
